@@ -1,0 +1,393 @@
+SQL1:
+    select
+        l_returnflag,
+        l_linestatus,
+        sum(l_quantity) as sum_qty,
+        sum(l_extendedprice) as sum_base_price,
+        sum(l_extendedprice * (1-l_discount)) as sum_disc_price,
+        sum(l_extendedprice * (1-l_discount) * (1+l_tax)) as sum_charge,
+        avg(l_quantity) as avg_qty,
+        avg(l_extendedprice) as avg_price,
+        avg(l_discount) as avg_disc,
+        count(*) as count_order
+    from
+        lineitem
+    where
+        l_shipdate <= mdy (12, 01, 1998 ) - 90 units day
+    group by
+        l_returnflag,
+        l_linestatus
+    order by
+        l_returnflag,
+        l_linestatus;
+
+MONGOSH1:
+    db.flat.aggregate([
+    {
+        $match: {
+        shipDate: {
+            $lte: ISODate("1998-09-02") // 90 days before December 1, 1998
+        }
+        }
+    },
+    {
+        $group: {
+        _id: {
+            returnflag: "$returnflag",
+            orderStatus: "$o_orderStatus"
+        },
+        sum_qty: { $sum: "$quantity" },
+        sum_base_price: { $sum: "$extendedPrice" },
+        sum_disc_price: { $sum: { $multiply: ["$extendedPrice", { $subtract: [1, "$discount"] }] } },
+        sum_charge: {
+            $sum: {
+            $multiply: [
+                { $multiply: ["$extendedPrice", { $subtract: [1, "$discount"] }] },
+                { $add: [1, "$tax"] }
+            ]
+            }
+        },
+        avg_qty: { $avg: "$quantity" },
+        avg_price: { $avg: "$extendedPrice" },
+        avg_disc: { $avg: "$discount" },
+        count_order: { $sum: 1 }
+        }
+    },
+    {
+        $project: {
+        _id: 0,
+        returnFlag: "$_id.returnFlag",
+        lineStatus: "$_id.lineStatus",
+        sum_qty: 1,
+        sum_base_price: 1,
+        sum_disc_price: 1,
+        sum_charge: 1,
+        avg_qty: 1,
+        avg_price: 1,
+        avg_disc: 1,
+        count_order: 1
+        }
+    },
+    {
+        $sort: {
+        returnflag: 1,
+        linestatus: 1
+        }
+    }
+    ]);
+
+SQL3:
+    select
+        l_orderkey,
+        sum(l_extendedprice * (1 - l_discount)) as revenue,
+        o_orderdate,
+        o_shippriority
+    from
+        customer,
+        orders,
+        lineitem
+    where
+        c_mktsegment = 'HOUSEHOLD'
+        and c_custkey = o_custkey
+        and l_orderkey = o_orderkey
+        and o_orderdate < '2000-08-29'
+        and l_shipdate > '1990-08-29'
+    group by
+        l_orderkey,
+        o_orderdate,
+        o_shippriority
+    order by
+        revenue desc,
+        o_orderdate
+
+MONGOSH3:
+    db.flat.aggregate([
+    {
+        $match: {
+        "o_orderDate": { $lt: ISODate("2000-08-29") },
+        "shipDate": { $gt: ISODate("1990-08-29") },
+        "c_marketSegment": "HOUSEHOLD"
+        }
+    },
+    {
+        $group: {
+        _id: {
+            orderKey: "$orderKey",
+            o_orderDate: "$o_orderDate",
+            o_shipPriority: "$o_shipPriority"
+        },
+        revenue: {
+            $sum: {
+            $multiply: [
+                "$extendedPrice",
+                { $subtract: [1, "$discount"] }
+            ]
+            }
+        }
+        }
+    },
+    {
+        $project: {
+        _id: 0,
+        orderKey: "$_id.orderKey",
+        revenue: 1,
+        o_orderDate: "$_id.o_orderDate",
+        o_shipPriority: "$_id.o_shipPriority"
+        }
+    },
+    {
+        $sort: {
+        revenue: -1,
+        o_orderDate: 1
+        }
+    }
+    ]);
+
+SQL4:
+    select
+        o_orderpriority,
+        count(*) as order_count
+    from
+        orders
+    where
+        o_orderdate >= date '1990-01-01'
+        and o_orderdate < date '1996-05-04' + interval '3' month
+        and exists (
+            select
+                *
+            from
+                lineitem
+            where
+                l_orderkey = o_orderkey
+                and l_commitdate < l_receiptdate
+        )
+    group by
+        o_orderpriority
+    order by
+        o_orderpriority;
+
+MONGOSH4:
+    db.flat.aggregate([
+    {
+        $match: {
+        o_orderDate: {
+            $gte: ISODate("1990-01-01"),
+            $lt: ISODate("1996-08-04"),
+            
+        },
+        $expr: {
+            $lt: ["$commitDate", "$receiptDate"]
+        }
+        }
+    },
+    {
+        $group: {
+        _id: "$o_orderPriority",
+        order_count: { $sum: 1 }
+        }
+    },
+    {
+        $sort: {
+        _id: 1
+        }
+    },
+    {
+        $project: {
+        _id: 0,
+        o_orderPriority: "$_id",
+        order_count: 1
+        }
+    }
+    ]);
+
+SQL5:
+    select
+        n_name,
+        sum(l_extendedprice * (1 - l_discount)) as revenue
+    from
+        customer,
+        orders,
+        lineitem,
+        supplier,
+        nation,
+        region
+    where
+        c_custkey = o_custkey
+        and l_orderkey = o_orderkey
+        and l_suppkey = s_suppkey
+        and c_nationkey = s_nationkey
+        and s_nationkey = n_nationkey
+        and n_regionkey = r_regionkey
+        and r_name = 'AMERICA'
+        and o_orderdate >= date '1992-01-01'
+        and o_orderdate < date '1998-04-02' + interval '1' year
+    group by
+        n_name
+    order by
+        revenue desc;
+
+MONGOSH5:
+    db.flat.aggregate([
+    {
+        $match: {
+            "c_region_name": "AMERICA",
+            "customerKey": { $exists: true },
+            "o_orderDate": {
+            $gte: ISODate("1990-01-01"),
+            $lt: ISODate("1999-04-02")
+            }    
+        }
+    },
+    {
+        $group: {
+        _id: "$c_nation_name",
+        revenue: {
+            $sum: {
+            $multiply: [
+                "$extendedPrice",
+                { $subtract: [1, "$discount"] }
+            ]
+            }
+        }
+        }
+    },
+    {
+        $sort: {
+        revenue: -1
+        }
+    },
+    {
+        $project: {
+        _id: 0,
+        c_nation_name: "$_id",
+        revenue: 1
+        }
+    }
+    ]);
+
+SQL6:
+    select
+        sum(l_extendedprice * l_discount) as revenue
+    from
+        lineitem
+    where
+        l_shipdate >= date '1990-01-01'
+        and l_shipdate < date '1996-08-09' + interval '1' year
+        and l_discount between 0.05 - 0.01 and 0.05 + 0.01
+        and l_quantity < 40;
+
+MONGOSH6:
+    db.flat.aggregate([
+    {
+        $match: {
+        shipDate: {
+            $gte: ISODate("1990-01-01"),
+            $lt: ISODate("1997-08-09"),
+        },
+        discount: {
+            $gte: 0.05 - 0.01,
+            $lte: 0.05 + 0.01
+        },
+        quantity: { $lt: 40 }
+        }
+    },
+    {
+        $group: {
+        _id: null,
+        revenue: {
+            $sum: {
+            $multiply: ["$extendedPrice", "$discount"]
+            }
+        }
+        }
+    },
+    {
+        $project: {
+        _id: 0,
+        revenue: 1
+        }
+    }
+    ]);
+
+
+
+
+
+
+
+----Skip-----
+SQL2:
+    select FIRST 100
+        c_name,
+        c_custkey,
+        o_orderkey,
+        o_orderdate,
+        o_totalprice,
+        sum(l_quantity)
+    from
+        customer,
+        orders,
+        lineitem
+    where
+        o_orderkey in (
+        select
+        l_orderkey
+        from
+        lineitem
+        group by
+        l_orderkey having
+            sum(l_quantity) > 30
+        )
+        and c_custkey = o_custkey
+        and o_orderkey = l_orderkey
+    group by
+        c_name,
+        c_custkey,
+        o_orderkey,
+        o_orderdate,
+        o_totalprice
+    order by
+        o_totalprice desc,
+        o_orderdate
+
+MONGOSH2:
+    db.flat.aggregate([
+    {
+        $group: {
+        _id: {
+            c_name: "$c_name",
+            c_custkey: "$c_custkey",
+            o_orderkey: "$orderkey",
+            o_orderdate: "$orderdate",
+            o_totalprice: "$extendedPrice"
+        },
+        sum_quantity: { $sum: "$quantity" }
+        }
+    },
+    {
+        $match: {
+        sum_quantity: { $gt: 30 }
+        }
+    },
+    {
+        $project: {
+        _id: 0,
+        c_name: "$_id.c_name",
+        c_custkey: "$_id.c_custkey",
+        o_orderkey: "$_id.o_orderkey",
+        o_orderdate: "$_id.o_orderdate",
+        o_totalprice: "$_id.o_totalprice",
+        sum_quantity: 1
+        }
+    },
+    {
+        $sort: {
+        extendedPrice: -1,
+        o_orderdate: 1
+        }
+    },
+    {
+        $limit: 100
+    }
+    ]);
+-------------

@@ -30,6 +30,8 @@ ENV PATH $PATH:$HADOOP_HOME/bin:$HADOOP_HOME/sbin:$SPARK_HOME/bin
 
 #COPY spark-3.4.1-bin-hadoop3.tgz /spark-3.4.1-bin-hadoop3.tgz
 
+COPY flat_line_item.csv /flat_line_item.csv
+
 RUN --mount=target=/var/lib/apt/lists,type=cache,sharing=locked \
     --mount=target=/var/cache/apt,type=cache,sharing=locked \
     rm -f /etc/apt/apt.conf.d/docker-clean && \
@@ -55,7 +57,7 @@ COPY hadoop-resources $HADOOP_HOME/etc/hadoop/
 
 RUN mkdir -p /mongo-jars
 
-COPY mongo-resources /mongo-jars/
+# COPY mongo-resources /mongo-jars/
 
 RUN hdfs namenode -format
 
@@ -71,4 +73,4 @@ COPY pyspark.tar.gz pyspark.tar.gz
 
 RUN pip install pyspark.tar.gz
 
-RUN pip install pandas
+# RUN pip install pandas

@@ -54,3 +54,23 @@ RUN --mount=target=/var/lib/apt/lists,type=cache,sharing=locked \
     mkdir -p $SPARK_HOME/logs
 
 COPY hadoop-resources $HADOOP_HOME/etc/hadoop/
+
+RUN mkdir -p /mongo-jars
+
+# COPY mongo-resources /mongo-jars/
+
+RUN hdfs namenode -format
+
+EXPOSE 50010 50020 50070 50075 50090 8020 9000 9001
+
+RUN --mount=target=/var/lib/apt/lists,type=cache,sharing=locked \
+    --mount=target=/var/cache/apt,type=cache,sharing=locked \
+    rm -f /etc/apt/apt.conf.d/docker-clean && \
+    apt-get install -y python3 && \
+    apt-get install -y python3-pip
+
+# COPY pyspark.tar.gz pyspark.tar.gz
+RUN pip install pyspark==$SPARK_VERSION
+# RUN pip install pyspark.tar.gz
+
+# RUN pip install pandas

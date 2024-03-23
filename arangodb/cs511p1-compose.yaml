@@ -36,9 +36,9 @@ services:
       networks:
          - localnet
    arangodb:
-      image: arangodb:latest
+      image: arangodb
       ports:
-         - 27017:27017
+         - 8529:8529
       volumes:
          - arangodb_data_container:/data/db
       networks:

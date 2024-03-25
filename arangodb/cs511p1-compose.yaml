@@ -40,12 +40,12 @@ services:
       ports:
          - 8529:8529
       volumes:
-         - arangodb_data_container:/data/db
+         - ./data :/data/db
       networks:
          - localnet
 
 volumes:
-  arangodb_data_container:
+  data:
 
 networks:
    localnet:

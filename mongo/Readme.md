@@ -17,3 +17,7 @@ spark.read.json(sc.wholeTextFiles("/flat_line_item.json").values().flatMap(lambd
 
 TODO
 Data cube link 
+
+INSERT 45 gb - sf20
+    Started - 2024-03-29 05:26:48
+    End -  2024-03-29 09:00:37

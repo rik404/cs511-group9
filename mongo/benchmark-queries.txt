@@ -76,6 +76,11 @@ MONGOSH1:
     }
     ]);
 
+
+RESULT-SF20:
+    millis: 253464,
+
+
 SQL3:
     select
         l_orderkey,
@@ -143,6 +148,9 @@ MONGOSH3:
     }
     ]);
 
+RESULT SF20:
+millis: 152660
+
 SQL4:
     select
         o_orderpriority,
@@ -199,6 +207,9 @@ MONGOSH4:
         }
     }
     ]);
+
+RESULT SF20:
+millis: 129701
 
 SQL5:
     select
@@ -265,6 +276,8 @@ MONGOSH5:
     }
     ]);
 
+RESULT SF20: millis: 140637
+
 SQL6:
     select
         sum(l_extendedprice * l_discount) as revenue
@@ -309,6 +322,8 @@ MONGOSH6:
     }
     ]);
 
+RESULT SF20:
+millis: 121181
 
 
 

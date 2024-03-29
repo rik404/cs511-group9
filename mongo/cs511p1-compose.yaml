@@ -27,6 +27,14 @@ services:
       command: ["/bin/bash", "start-worker.sh"]
       networks:
          - localnet
+   worker3:
+      image: cs511p1-worker
+      hostname: worker3
+      tty: true
+      stdin_open: true
+      command: ["/bin/bash", "start-worker.sh"]
+      networks:
+         - localnet
    mongodb:
       image: mongo:latest
       # environment:
@@ -40,7 +48,7 @@ services:
          - localnet
 
 volumes:
-  mongodb_data_container:
+   mongodb_data_container:
 
 networks:
    localnet:

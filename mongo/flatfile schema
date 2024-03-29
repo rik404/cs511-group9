@@ -12,9 +12,9 @@ schema = StructType(
     StructField('shipInstructions', StringType(), True),
     StructField('shipMode', StringType(), True),
     StructField('orderKey', IntegerType(), True),
-    StructField('o_orderStatus', StringType(), True),
-    StructField('o_orderDate', DateType(), True),
-    StructField('o_orderPriority', StringType(), True),
+    StructField('orderStatus', StringType(), True),
+    StructField('orderDate', DateType(), True),
+    StructField('orderPriority', StringType(), True),
     StructField('o_shipPriority', IntegerType(), True),
     StructField('customerKey', IntegerType(), True),
     StructField('c_name', StringType(), True),
@@ -40,4 +40,4 @@ schema = StructType(
    ]
   )
 
-  ,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+lineNumber,quantity,extendedPrice,discount,tax,returnFlag,status,shipDate,commitDate,receiptDate,shipInstructions,shipMode,orderKey,orderStatus,orderDate,orderPriority,o_shipPriority,customerKey,c_name,c_address,c_phone,c_marketSegment,c_nation_name,c_region_name,partKey,p_name,p_manufacturer,p_brand,p_type,p_size,p_container,p_retailPrice,supplierKey,s_name,s_address,s_phone,s_nation_name,s_region_name

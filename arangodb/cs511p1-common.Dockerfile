@@ -70,5 +70,6 @@ RUN --mount=target=/var/lib/apt/lists,type=cache,sharing=locked \
     apt-get install -y python3-pip
 
 RUN pip install pyspark==$SPARK_VERSION
-
+RUN pip install pandas
 RUN pip install pyarango
+RUN pip install pyyaml

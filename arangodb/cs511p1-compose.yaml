@@ -47,6 +47,10 @@ services:
 volumes:
   data:
 
+# networks:
+#    localnet:
+#       attachable: true
+
 networks:
    localnet:
-      attachable: true
+      driver: bridge

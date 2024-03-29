@@ -30,6 +30,8 @@ ENV PATH $PATH:$HADOOP_HOME/bin:$HADOOP_HOME/sbin:$SPARK_HOME/bin
 
 #COPY spark-3.4.1-bin-hadoop3.tgz /spark-3.4.1-bin-hadoop3.tgz
 
+COPY data/snow_date.csv /snow_date.csv
+
 RUN --mount=target=/var/lib/apt/lists,type=cache,sharing=locked \
     --mount=target=/var/cache/apt,type=cache,sharing=locked \
     rm -f /etc/apt/apt.conf.d/docker-clean && \
@@ -68,3 +70,5 @@ RUN --mount=target=/var/lib/apt/lists,type=cache,sharing=locked \
     apt-get install -y python3-pip
 
 RUN pip install pyspark==$SPARK_VERSION
+
+RUN pip install pyarango

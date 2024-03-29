@@ -27,13 +27,13 @@ RUN mkdir -p /data/db
 EXPOSE 8529
 
 # Copy CSV file into container
-COPY data/snow_date.csv /snow_date.csv
-COPY data/snow_line_item.csv /snow_line_item.csv
+# COPY data/snow_date.csv /snow_date.csv
+# COPY data/snow_line_item.csv /snow_line_item.csv
 # Copy the entrypoint script into the container
-COPY docker-entrypoint.sh docker-entrypoint.sh
+# COPY docker-entrypoint.sh docker-entrypoint.sh
 
 # Grant execute permissions to the entrypoint script
-RUN chmod +x /docker-entrypoint.sh
+# RUN chmod +x /docker-entrypoint.sh
 
 # Set the entrypoint
-ENTRYPOINT ["sh", "docker-entrypoint.sh"]
+# ENTRYPOINT ["sh", "docker-entrypoint.sh"]

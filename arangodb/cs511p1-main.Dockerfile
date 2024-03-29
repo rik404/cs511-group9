@@ -15,3 +15,7 @@ COPY ./start-main.sh ./start-main.sh
 CMD ["/bin/bash", "start-main.sh"]
 
 ENV PYTHONPATH $SPARK_HOME/python/:$PYTHONPATH
+
+COPY ./code/arangoLoader.py ./arangoLoader.py
+
+# CMD ["spark-submit", "arangoLoader.py"]

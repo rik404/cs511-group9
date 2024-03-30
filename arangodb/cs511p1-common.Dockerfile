@@ -30,8 +30,10 @@ ENV PATH $PATH:$HADOOP_HOME/bin:$HADOOP_HOME/sbin:$SPARK_HOME/bin
 
 #COPY spark-3.4.1-bin-hadoop3.tgz /spark-3.4.1-bin-hadoop3.tgz
 
-COPY data/snow_date.csv /snow_date.csv
-
+# COPY data/snow_date.csv /snow_date.csv
+# COPY data/snow_line_item.csv /snow_line_item.csv
+COPY /data/flat_line_item.csv /flat_line_item.csv
+ 
 RUN --mount=target=/var/lib/apt/lists,type=cache,sharing=locked \
     --mount=target=/var/cache/apt,type=cache,sharing=locked \
     rm -f /etc/apt/apt.conf.d/docker-clean && \

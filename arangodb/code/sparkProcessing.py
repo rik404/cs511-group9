@@ -38,10 +38,10 @@ def process_csv_and_upload(config_file, parquet_file, collection_name, dataset):
     df.show()
 
     # Save the processed data to Parquet format in HDFS
-    df.write.parquet(f"hdfs://{hdfs_host}:{hdfs_port}/user/spark/{parquet_file}")
+    # df.write.parquet(f"hdfs://{hdfs_host}:{hdfs_port}/user/spark/{parquet_file}")
 
     # Stop SparkSession
-    spark.stop()
+    # spark.stop()
 
     # Connect to ArangoDB
     conn = Connection(username=arango_username, password=arango_password, arangoURL=f"http://{arango_host}:{arango_port}")
@@ -53,15 +53,16 @@ def process_csv_and_upload(config_file, parquet_file, collection_name, dataset):
     collection = db[collection_name]
 
     # Initialize SparkSession
-    spark = SparkSession.builder \
-        .appName("ArangoDBUpload") \
-        .getOrCreate()
+    # spark = SparkSession.builder \
+    #     .appName("ArangoDBUpload") \
+    #     .getOrCreate()
 
     # Read processed data from HDFS
-    processedData = spark.read.parquet(f"hdfs://{hdfs_host}:{hdfs_port}/user/spark/{parquet_file}")
+    # processedData = spark.read.parquet(f"hdfs://{hdfs_host}:{hdfs_port}/user/spark/{parquet_file}")
 
     # Convert Spark DataFrame to Pandas DataFrame
-    processed_df_pandas = processedData.toPandas()
+    # processed_df_pandas = processedData.toPandas()
+    processed_df_pandas = df.toPandas()
 
     # Convert Pandas DataFrame to list of dictionaries
     data = processed_df_pandas.to_dict(orient="records")

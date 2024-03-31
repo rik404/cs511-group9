@@ -1,0 +1,10 @@
+hdfs:
+  host: main
+  port: 9000
+
+arango:
+  username: root
+  password: cs511grp9
+  host: arangodb
+  port: 8529
+  db: _system

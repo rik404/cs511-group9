@@ -1,0 +1,1 @@
+docker-compose -f cs511p1-compose.yaml exec main bash -x -c spark-shell --packages org.apache.kudu:kudu-spark_2.10:1.5.0-cdh5.13.91 --repositories https://repository.cloudera.com/artifactory/cloudera-repos/

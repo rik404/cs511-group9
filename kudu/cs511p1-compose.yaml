@@ -1,0 +1,80 @@
+version: '3.7'
+services:
+   main:
+      image: cs511p1-main
+      hostname: main
+      tty: true
+      stdin_open: true
+      ports:
+        - 8080:8080
+        - 8081:8081
+      command: ["/bin/bash", "start-main.sh"]
+      networks:
+         - localnet
+   worker1:
+      image: cs511p1-worker
+      hostname: worker1
+      tty: true
+      stdin_open: true
+      command: ["/bin/bash", "start-worker.sh"]
+      networks:
+         - localnet
+   worker2:
+      image: cs511p1-worker
+      hostname: worker2
+      tty: true
+      stdin_open: true
+      command: ["/bin/bash", "start-worker.sh"]
+      networks:
+         - localnet
+   worker3:
+      image: cs511p1-worker
+      hostname: worker3
+      tty: true
+      stdin_open: true
+      command: ["/bin/bash", "start-worker.sh"]
+      networks:
+         - localnet
+   kudu-master-data:
+      image: kunickiaj/kudu
+      volumes:
+      - /var/lib/kudu/master
+      networks:
+         - localnet
+   kudu-tserver-data:
+      image: kunickiaj/kudu
+      volumes:
+         - /var/lib/kudu/tserver
+      networks:
+         - localnet
+   kudu-master:
+      image: kunickiaj/kudu
+      ports:
+         - 7051:7051
+      volumes_from:
+         - kudu-master-data
+      command: master
+      hostname: boot2docker
+      networks:
+         - localnet
+   kudu-tserver:
+      image: kunickiaj/kudu
+      environment:
+         - KUDU_MASTER=kudu-master
+      ports:
+         - 7050:7050
+      volumes_from:
+         - kudu-tserver-data
+      command: tserver
+      links:
+         - kudu-master
+      hostname: boot2docker
+      networks:
+         - localnet
+
+volumes:
+  data:
+
+networks:
+   localnet:
+      attachable: true

@@ -77,8 +77,10 @@ MONGOSH1:
     ]);
 
 
-RESULT-SF20:
-    millis: 253464,
+RESULT
+-SF20-millis: 253464,
+-SF10-millis: 105485
+-SF1-millis: 9833
 
 
 SQL3:
@@ -149,7 +151,9 @@ MONGOSH3:
     ]);
 
 RESULT SF20:
-millis: 152660
+SF20-millis: 152660
+SF10-millis: 60222
+SF1-millis: 5123
 
 SQL4:
     select
@@ -208,8 +212,10 @@ MONGOSH4:
     }
     ]);
 
-RESULT SF20:
-millis: 129701
+RESULT
+SF20-millis: 129701
+SF10-millis: 57333
+SF1-millis: 4807
 
 SQL5:
     select
@@ -276,7 +282,10 @@ MONGOSH5:
     }
     ]);
 
-RESULT SF20: millis: 140637
+RESULT 
+SF20-millis: 140637
+SF10-millis: 59454
+SF1-millis: 5048
 
 SQL6:
     select
@@ -322,9 +331,10 @@ MONGOSH6:
     }
     ]);
 
-RESULT SF20:
-millis: 121181
-
+RESULT
+SF20-millis: 121181
+SF10-millis: 51261
+SF1-millis: 3974
 
 
 

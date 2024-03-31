@@ -3,12 +3,16 @@ Run pyspark_shell_master to connect to pyspark with mongo access mongo using :
 
 # spark.read.format("mongodb").option( "spark.mongodb.input.uri", "mongodb://mongodb:27017/$db.$collection").load() to read a particular coll
 # spark.write.format("mongodb").option("spark.mongodb.output.uri", "mongodb://mongodb:27017/$db.$collection").save() to write to particular coll
+sed -i "1s/.*/$var/" file.txt
 
 read csv
 df = spark.read.option("header", True).schema(schema).csv('/flat_line_item.csv')
 
-mongo write 
-df.write.format("mongodb").option("spark.mongodb.output.uri", "mongodb://mongodb:27017/").option("database","test").option("collection","flat").mode("append").save()
+mongo write
+def func():
+    print(datetime.now())
+    df.write.format("mongodb").option("spark.mongodb.output.uri", "mongodb://mongodb:27017/").option("database","test").option("collection","flat").mode("append").save()
+    print(datetime.now())
 
 mongo read
 df2 = spark.read.format("mongodb").option( "spark.mongodb.input.uri", "mongodb://mongodb:27017/").option("database", "test").option("collection","flat").load()
@@ -21,3 +25,11 @@ Data cube link
 INSERT 45 gb - sf20
     Started - 2024-03-29 05:26:48
     End -  2024-03-29 09:00:37
+
+INSERT 22.5 gb - sf10
+    Started - 24/03/31 18:54:24
+    End - 2024-03-31 20:20:02
+
+INSERT 2.25 gb - sf1
+    Started - 2024-03-31 20:54:23
+    End - 2024-03-31 20:54:23

@@ -1,0 +1,294 @@
+// Licensed to the Apache Software Foundation (ASF) under one
+// or more contributor license agreements.  See the NOTICE file
+// distributed with this work for additional information
+// regarding copyright ownership.  The ASF licenses this file
+// to you under the Apache License, Version 2.0 (the
+// "License"); you may not use this file except in compliance
+// with the License.  You may obtain a copy of the License at
+//
+//   http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing,
+// software distributed under the License is distributed on an
+// "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+// KIND, either express or implied.  See the License for the
+// specific language governing permissions and limitations
+// under the License.
+syntax = "proto2";
+package kudu.tserver;
+
+option java_package = "org.apache.kudu.tserver";
+
+import "kudu/common/common.proto";
+import "kudu/common/wire_protocol.proto";
+import "kudu/consensus/metadata.proto";
+import "kudu/rpc/rpc_header.proto";
+import "kudu/tablet/metadata.proto";
+import "kudu/transactions/transactions.proto";
+import "kudu/tserver/tserver.proto";
+
+message CoordinatorOpPB {
+  enum CoordinatorOpType {
+    UNKNOWN = 0;
+    BEGIN_TXN = 1;
+    REGISTER_PARTICIPANT = 2;
+    BEGIN_COMMIT_TXN = 3;
+    ABORT_TXN = 4;
+    GET_TXN_STATUS = 5;
+    KEEP_TXN_ALIVE = 6;
+  }
+  optional CoordinatorOpType type = 1;
+  optional int64 txn_id = 2;
+
+  // Only set if 'type' is REGISTER_PARTICIPANT.
+  optional string txn_participant_id = 3;
+
+  // End-user that is associated with this request.
+  optional string user = 4;
+}
+
+message CoordinatorOpResultPB {
+  optional AppStatusPB op_error = 1;
+
+  // The status of the transaction as seen at the moment when the request was
+  // processed. Populated only if responding to a request of the GET_TXN_STATUS
+  // operation type.
+  // TODO(aserbin): does it make sense to populate this with the current status
+  //                of the transaction for other operation types?
+  optional transactions.TxnStatusEntryPB txn_status = 2;
+
+  // The highest transaction identifier (txn_id) seen by the TxnStatusManager
+  // that coordinates the lifecycle of operations for a particular tablet
+  // of the transaction status table. This field is populated when responding
+  // to a request of the BEGIN_TXN type (in success and error cases).
+  optional int64 highest_seen_txn_id = 3;
+
+  // The keep-alive interval for the transaction to begin. This field
+  // is set only if responding to requests of the BEGIN_TXN type.
+  //
+  // TODO(aserbin): it might make sense to populate this field also for
+  //                responses of the GET_TXN_STATUS and KEEP_TXN_ALIVE types.
+  optional uint32 keepalive_millis = 4;
+
+  // TODO(awong): populate this with some application-level results, like the
+  // actual transaction ID assigned, the next highest transaction ID available,
+  // etc.
+}
+
+message CoordinateTransactionRequestPB {
+  // The tablet ID of the transaction status tablet associated with the given
+  // operation.
+  optional bytes txn_status_tablet_id = 1;
+
+  // TODO(awong): consider batching these ops, though we'll need to give a lot
+  // of thought to locking constraints.
+  optional CoordinatorOpPB op = 2;
+}
+
+message CoordinateTransactionResponsePB {
+  // If there was a service-level error with the request (e.g. the server was
+  // not online, the tablet was not found, etc.), the error status that caused
+  // the failure.
+  optional TabletServerErrorPB error = 1;
+
+  // The application-level result of the operation.
+  optional CoordinatorOpResultPB op_result = 2;
+}
+
+message ParticipantOpPB {
+  enum ParticipantOpType {
+    UNKNOWN = 0;
+    BEGIN_TXN = 1;
+    BEGIN_COMMIT = 2;
+    FINALIZE_COMMIT = 3;
+    ABORT_TXN = 4;
+
+    // Get metadata about the given participant.
+    GET_METADATA = 5;
+  }
+  optional ParticipantOpType type = 1;
+  optional int64 txn_id = 2;
+
+  // Only set if 'type' is FINALIZE_COMMIT.
+  optional int64 finalized_commit_timestamp = 3;
+}
+
+message ParticipantRequestPB {
+  optional bytes tablet_id = 1;
+  optional ParticipantOpPB op = 2;
+}
+
+message ParticipantResponsePB {
+  optional TabletServerErrorPB error = 1;
+
+  // The timestamp chosen by the server for this participant op.
+  optional fixed64 timestamp = 2;
+
+  // Metadata returned for a GET_METADATA op. May be absent if no metadata
+  // existed on the given participant for the given transaction.
+  optional tablet.TxnMetadataPB metadata = 3;
+}
+
+message AlterSchemaRequestPB {
+  // UUID of server this request is addressed to.
+  optional bytes dest_uuid = 5;
+
+  required bytes tablet_id = 1;
+
+  // TODO: Replace with the table descriptor
+  // (Schema, Column IDs, Column Attributes)
+  required SchemaPB schema = 2;
+
+  required uint32 schema_version = 3;
+  optional string new_table_name = 4;
+  optional TableExtraConfigPB new_extra_config = 6;
+}
+
+message AlterSchemaResponsePB {
+  optional TabletServerErrorPB error = 1;
+
+  // The timestamp chosen by the server for this alter schema operation.
+  // TODO KUDU-611 propagate timestamps with server signature.
+  optional fixed64 timestamp = 2;
+}
+
+// A create tablet request.
+message CreateTabletRequestPB {
+  // UUID of server this request is addressed to.
+  optional bytes dest_uuid = 8;
+
+  // The type of table this tablet belongs to. If not set, the assumption is
+  // this is a user-defined table as opposed to a Kudu-internal system table.
+  optional TableTypePB table_type = 13;
+
+  required bytes table_id = 1;
+  required bytes tablet_id = 2;
+  // DEPRECATED.
+  optional bytes start_key = 3;
+  // DEPRECATED.
+  optional bytes end_key = 4;
+  // The partition of the tablet.
+  optional PartitionPB partition = 9;
+
+  required string table_name = 5;
+  required SchemaPB schema = 6;
+  // The partition schema of the table which the tablet belongs to.
+  optional PartitionSchemaPB partition_schema = 10;
+
+  // Initial consensus configuration for the tablet.
+  required consensus.RaftConfigPB config = 7;
+
+  // The table's extra-config.
+  optional TableExtraConfigPB extra_config = 11;
+
+  // The dimension label for tablet. Used by the master to determine load when
+  // creating new tablet replicas based on dimension.
+  optional string dimension_label = 12;
+}
+
+message CreateTabletResponsePB {
+  optional TabletServerErrorPB error = 1;
+}
+
+// A delete tablet request.
+message DeleteTabletRequestPB {
+  // UUID of server this request is addressed to.
+  optional bytes dest_uuid = 4;
+
+  required bytes tablet_id = 1;
+
+  // Reason the tablet is being deleted (for logging purposes)
+  optional string reason = 2;
+
+  // Must be one of TABLET_DATA_DELETED (for table deletes) or
+  // TABLET_DATA_TOMBSTONED (for replica retirement).
+  optional tablet.TabletDataState delete_type = 3 [ default = TABLET_DATA_TOMBSTONED ];
+
+  // The highest allowed OpId index of the latest known committed config.
+  // This optional parameter is here to provide an atomic (compare-and-swap)
+  // DeleteTablet operation. If this parameter is specified, the DeleteTablet()
+  // operation will succeed only if the committed config has an opid_index that
+  // is less than or equal to this value.
+  // See also the definition of RaftConfigPB.
+  // Note: At the time of this writing, there is a small race between checking
+  // the value of the committed config opid index and shutting down the tablet
+  // for deletion. See comments in ts_tablet_manager.cc
+  optional int64 cas_config_opid_index_less_or_equal = 5;
+}
+
+message DeleteTabletResponsePB {
+  optional TabletServerErrorPB error = 1;
+}
+
+// Enum of the server's Tablet Manager state: currently this is only
+// used for assertions, but this can also be sent to the master.
+enum TSTabletManagerStatePB {
+  UNKNOWN = 999;
+
+  // Indicates that Tablet Manager is initializing.
+  MANAGER_INITIALIZING = 0;
+
+  // Indicates that Tablet Manager is running and can create new
+  // tablets.
+  MANAGER_RUNNING = 1;
+
+  // Indicates that tablet manager is shutting down and no new tablets
+  // can be created.
+  MANAGER_QUIESCING = 2;
+
+  // Tablet Manager has shutdown.
+  MANAGER_SHUTDOWN = 3;
+}
+
+service TabletServerAdminService {
+  option (kudu.rpc.default_authz_method) = "AuthorizeServiceUser";
+
+  // Create a new, empty tablet with the specified parameters. Only used for
+  // brand-new tablets, not for "moves".
+  rpc CreateTablet(CreateTabletRequestPB) returns (CreateTabletResponsePB);
+
+  // Delete a tablet replica.
+  rpc DeleteTablet(DeleteTabletRequestPB) returns (DeleteTabletResponsePB);
+
+  // Alter a tablet's schema.
+  rpc AlterSchema(AlterSchemaRequestPB) returns (AlterSchemaResponsePB);
+
+  // Quiesce the tablet server.
+  rpc Quiesce(QuiesceTabletServerRequestPB) returns (QuiesceTabletServerResponsePB);
+
+  // Coordinate the lifecycle of a transaction.
+  rpc CoordinateTransaction(CoordinateTransactionRequestPB)
+      returns (CoordinateTransactionResponsePB);
+
+  // Request that a tablet participate in a transaction, or update the state of
+  // an existing transaction participant.
+  rpc ParticipateInTransaction(ParticipantRequestPB) returns (ParticipantResponsePB);
+}
+
+message QuiesceTabletServerRequestPB {
+  // Indicates whether the request is to start quiescing or to stop quiescing.
+  // If not set, the tserver's quiescing state will not be changed.
+  optional bool quiesce = 1;
+
+  // Indicates whether to return the number of tablet leaders and active
+  // scanners.
+  optional bool return_stats = 2;
+}
+
+message QuiesceTabletServerResponsePB {
+  // The error, if an error occurred with this request.
+  optional TabletServerErrorPB error = 1;
+
+  // Returns whether the tablet server after having processed the request is
+  // quiescing. This field is returned regardless of whether the server's
+  // quiescing state was changed.
+  optional bool is_quiescing = 2;
+
+  // The number of active scanners on the given tablet server. Only returned if
+  // stats were requested.
+  optional int32 num_active_scanners = 3;
+
+  // The number of tablet leaders hosted on the given tablet server. Only
+  // returned if stats were requested.
+  optional int32 num_leaders = 4;
+}

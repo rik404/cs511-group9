@@ -18,8 +18,8 @@ hdfs dfs -mkdir -p /user/spark
 hdfs dfs -put flat_line_item.csv /user/spark/flat_line_item.csv
 
 # spark-submit ./code/sparkProcessing.py --config ./code/config.yml --dataset snow_date.csv --parquet_file processed_data.parquet --collection_name sample
-spark-submit ./code/sparkProcessing.py --config ./code/config.yml --dataset flat_line_item.csv --parquet_file processed_data.parquet --collection_name sample
-
+# spark-submit --driver-memory 5g ./code/sparkProcessing.py --config ./code/config.yml --dataset flat_line_item.csv --parquet_file processed_data.parquet --collection_name sample
+spark-submit --driver-memory 5g --packages "com.arangodb:arangodb-spark-datasource-3.4_2.12:1.6.0" --class ArangoLoader ./code/sparkarangoloader_2.12-0.1.0-SNAPSHOT.jar
 
 
 # Keep the container running

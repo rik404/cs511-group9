@@ -3,7 +3,7 @@ Run pyspark_shell_master to connect to pyspark with mongo access mongo using :
 
 # spark.read.format("mongodb").option( "spark.mongodb.input.uri", "mongodb://mongodb:27017/$db.$collection").load() to read a particular coll
 # spark.write.format("mongodb").option("spark.mongodb.output.uri", "mongodb://mongodb:27017/$db.$collection").save() to write to particular coll
-sed -i "1s/.*/$var/" file.txt
+sed -i "1s/.*/lineNumber,quantity,extendedPrice,discount,tax,returnFlag,status,shipDate,commitDate,receiptDate,shipInstructions,shipMode,orderKey,orderStatus,orderDate,orderPriority,o_shipPriority,customerKey,c_name,c_address,c_phone,c_marketSegment,c_nation_name,c_region_name,partKey,p_name,p_manufacturer,p_brand,p_type,p_size,p_container,p_retailPrice,supplierKey,s_name,s_address,s_phone,s_nation_name,s_region_name/" flat_line_item.csv
 
 read csv
 df = spark.read.option("header", True).schema(schema).csv('/flat_line_item.csv')

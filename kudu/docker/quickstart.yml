@@ -25,30 +25,32 @@ services:
       - 8080:8080
       - 8081:8081
     command: ["/bin/bash", "start-main.sh"]
-    # networks:
-    #    - localnet
+    networks:
+       - localnet
   worker1:
     image: cs511p1-worker
     hostname: worker1
     tty: true
     stdin_open: true
     command: ["/bin/bash", "start-worker.sh"]
-    # networks:
-    #    - localnet
+    networks:
+       - localnet
   worker2:
     image: cs511p1-worker
     hostname: worker2
     tty: true
     stdin_open: true
     command: ["/bin/bash", "start-worker.sh"]
-    # networks:
-    #    - localnet
+    networks:
+       - localnet
   worker3:
     image: cs511p1-worker
     hostname: worker3
     tty: true
     stdin_open: true
     command: ["/bin/bash", "start-worker.sh"]
+    networks:
+       - localnet
   kudu-master-1:
     image: apache/kudu:${KUDU_QUICKSTART_VERSION:-latest}
     ports:
@@ -71,12 +73,15 @@ services:
         --stderrthreshold=0
         --use_hybrid_clock=false
         --unlock_unsafe_flags=true
-
+    networks:
+       - localnet
   kudu-master-2:
     image: apache/kudu:${KUDU_QUICKSTART_VERSION:-latest}
     ports:
       - "7151:7151"
       - "8151:8151"
+    networks:
+      - localnet
     command: ["master"]
     volumes:
       - kudu-master-2:/var/lib/kudu
@@ -97,6 +102,8 @@ services:
     ports:
       - "7251:7251"
       - "8251:8251"
+    networks:
+       - localnet
     command: ["master"]
     volumes:
       - kudu-master-3:/var/lib/kudu
@@ -121,6 +128,8 @@ services:
     ports:
       - "7050:7050"
       - "8050:8050"
+    networks:
+       - localnet
     command: ["tserver"]
     volumes:
       - kudu-tserver-1:/var/lib/kudu
@@ -145,6 +154,8 @@ services:
     ports:
       - "7150:7150"
       - "8150:8150"
+    networks:
+       - localnet
     command: ["tserver"]
     volumes:
       - kudu-tserver-2:/var/lib/kudu
@@ -169,6 +180,8 @@ services:
     ports:
       - "7250:7250"
       - "8250:8250"
+    networks:
+       - localnet
     command: ["tserver"]
     volumes:
       - kudu-tserver-3:/var/lib/kudu
@@ -193,6 +206,8 @@ services:
     ports:
       - "7350:7350"
       - "8350:8350"
+    networks:
+       - localnet
     command: ["tserver"]
     volumes:
       - kudu-tserver-4:/var/lib/kudu
@@ -217,6 +232,8 @@ services:
     ports:
       - "7450:7450"
       - "8450:8450"
+    networks:
+       - localnet
     command: ["tserver"]
     volumes:
       - kudu-tserver-5:/var/lib/kudu
@@ -241,3 +258,7 @@ volumes:
   kudu-tserver-3:
   kudu-tserver-4:
   kudu-tserver-5:
+
+networks:
+   localnet:
+      attachable: true

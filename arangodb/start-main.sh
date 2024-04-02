@@ -9,14 +9,12 @@ eval "$(ssh-agent -s)"
 ssh-add ~/.ssh/shared_rsa
 ssh-copy-id -i ~/.ssh/id_rsa -o 'IdentityFile ~/.ssh/shared_rsa' -o StrictHostKeyChecking=no -f worker1
 ssh-copy-id -i ~/.ssh/id_rsa -o 'IdentityFile ~/.ssh/shared_rsa' -o StrictHostKeyChecking=no -f worker2
-
 # DO NOT MODIFY THE ABOVE ##########################################################
 ####################################################################################
-
 # Start HDFS/Spark main here
+
 hdfs --daemon start namenode
 hdfs --daemon start datanode
-
 /usr/local/spark/sbin/start-master.sh
 /usr/local/spark/sbin/start-worker.sh spark://main:7077
 

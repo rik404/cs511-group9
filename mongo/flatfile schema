@@ -1,3 +1,4 @@
+from pyspark.sql.types import *
 schema = StructType(
    [StructField('lineNumber', IntegerType(), True),
     StructField('quantity', IntegerType(), True),

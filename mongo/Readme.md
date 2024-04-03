@@ -9,10 +9,12 @@ read csv
 df = spark.read.option("header", True).schema(schema).csv('/flat_line_item.csv')
 
 mongo write
+from datetime import datetime
 def func():
     print(datetime.now())
     df.write.format("mongodb").option("spark.mongodb.output.uri", "mongodb://mongodb:27017/").option("database","test").option("collection","flat").mode("append").save()
     print(datetime.now())
+
 
 mongo read
 df2 = spark.read.format("mongodb").option( "spark.mongodb.input.uri", "mongodb://mongodb:27017/").option("database", "test").option("collection","flat").load()
@@ -31,5 +33,5 @@ INSERT 22.5 gb - sf10
     End - 2024-03-31 20:20:02
 
 INSERT 2.25 gb - sf1
-    Started - 2024-03-31 20:54:23
-    End - 2024-03-31 20:54:23
+    Started - 2024-04-03 00:50:24
+    End - 2024-04-03 01:02:25

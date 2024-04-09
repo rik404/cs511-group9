@@ -80,6 +80,8 @@ MONGOSH1:
 RESULT
 -SF20-millis: 253464,
 -SF10-millis: 105485
+-SF5-millis: 84473,
+-SF3-millis: 50523
 -SF1-millis: 9833
 
 
@@ -153,6 +155,8 @@ MONGOSH3:
 RESULT SF20:
 SF20-millis: 152660
 SF10-millis: 60222
+SF5-millis: 30107
+SF3-millis: 24328
 SF1-millis: 5123
 
 SQL4:
@@ -215,6 +219,8 @@ MONGOSH4:
 RESULT
 SF20-millis: 129701
 SF10-millis: 57333
+SF5-millis: 28100
+SF3-millis: 26463
 SF1-millis: 4807
 
 SQL5:
@@ -285,6 +291,8 @@ MONGOSH5:
 RESULT 
 SF20-millis: 140637
 SF10-millis: 59454
+SF5-millis: 28166
+SF3-millis: 18005
 SF1-millis: 5048
 
 SQL6:
@@ -334,6 +342,8 @@ MONGOSH6:
 RESULT
 SF20-millis: 121181
 SF10-millis: 51261
+SF5-millis: 20597
+SF3-millis: 31717
 SF1-millis: 3974
 
 

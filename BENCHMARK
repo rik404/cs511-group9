@@ -6,7 +6,11 @@ MONGO-----------------
 
 SF20 - 03:33:49
 SF10 - 01:25:38
-SF1 - 
+SF5 - 00:46:50
+SF4 - 00:37:55
+SF3 - 00:28:21
+SF2 - 00:20:15
+SF1 - 00:12:01
 
 ----------------------
 
@@ -14,6 +18,7 @@ KUDU------------------
 
 SF20 - 
 SF10 - 
+SF2 - 95.129 s
 SF1 - 41.806 s
 
 ----------------------
@@ -28,26 +33,46 @@ MONGO-----------------
 MONGOSH1:
     SF20-millis: 253464,
     SF10-millis: 105485
+    SF5-millis: 84473,
+    SF4-millis: 77668
+    SF3-millis: 50523
+    SF2-millis: 36907
     SF1-millis: 9833
 
 MONGOSH3:
     SF20-millis: 152660
     SF10-millis: 60222
+    SF5-millis: 30107
+    SF4-millis: 23084
+    SF3-millis: 24328
+    SF2-millis: 13283
     SF1-millis: 5123
 
 MONGOSH4:
     SF20-millis: 129701
     SF10-millis: 57333
+    SF5-millis: 28100
+    SF4-millis: 24087
+    SF3-millis: 26463
+    SF2-millis: 15234
     SF1-millis: 4807
 
 MONGOSH5:
     SF20-millis: 140637
     SF10-millis: 59454
+    SF5-millis: 28166
+    SF4-millis: 20782
+    SF3-millis: 18005
+    SF2-millis: 15899
     SF1-millis: 5048
 
 MONGOSH6:
     SF20-millis: 121181
     SF10-millis: 51261
+    SF5-millis: 20597
+    SF4-millis: 34547
+    SF3-millis: 31717
+    SF2-millis: 28232
     SF1-millis: 3974
 
 ----------------------
@@ -56,27 +81,32 @@ KUDU------------------
 
 IMPALA1:
     SF20: 
-    SF10: 
+    SF10:
+    SF2: 2.12s
     SF1: 0.68s
 
 IMPALA3:
     SF20: 
     SF10: 
+    SF2: 45.90s
     SF1: 32.11s
 
 IMPALA4:
     SF20: 
     SF10: 
+    SF2: 2.34s
     SF1: 0.36s
 
 IMPALA5:
     SF20: 
     SF10: 
+    SF2: 2.98s
     SF1: 1.48s
 
 IMPALA6:
     SF20: 
     SF10: 
+    SF2: 1.89s
     SF1: 0.25s
 
 ----------------------

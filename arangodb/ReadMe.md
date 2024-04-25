@@ -9,7 +9,7 @@ Please ensure that the docker is configured to have a minimum of
 - Virtual Disk Limit: 128GB
 
 ## Dataset Generation
-Please refer to the ```koalabench``` folder on how to generate the dataset. Please generate datasets of flat data model and place them inside the folder ```data```
+Please refer to the ```koalabench``` folder on how to generate the dataset. Please generate datasets of flat data model and place them inside a folder named ```data```
 
 ## Running the experiments
 

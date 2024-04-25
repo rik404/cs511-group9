@@ -17,7 +17,4 @@ CMD ["/bin/bash", "start-main.sh"]
 ENV PYTHONPATH $SPARK_HOME/python/:$PYTHONPATH
 
 COPY ./code ./code
-# COPY ./code/sparkLoader.py ./sparkLoader.py
 
-# ENTRYPOINT [ "bash", "./code/docker-entrypoint.sh" ]
-# CMD ["spark-submit", "arangoLoader.py"]

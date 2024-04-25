@@ -156,7 +156,8 @@ public class DBGen{
 	private void generateSparse(){
 		if (format.equals("tab")||format.equals("csv")) {
 			System.out.println("ERROR: Unsupported format for sparse order data generation, format: "+ format);  
-			return;} 
+			return;}
+//		System.out.println("++"+scaleFactor);
 		Sparse1OrderGenerator sparseOrderGen = new Sparse1OrderGenerator((int) scaleFactor); 
 		p.print(sparseOrderGen, genDataDir+sep+"sparse_order", format);
 		System.out.println("\n...\nData generation ended");

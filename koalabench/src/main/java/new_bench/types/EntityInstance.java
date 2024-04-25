@@ -1,5 +1,6 @@
 package new_bench.types;
 
+import java.util.Arrays;
 import java.util.HashMap;
 
 import new_bench.util.SchemaFilters;
@@ -13,7 +14,7 @@ public class EntityInstance {
     protected String relationName; 
     protected String prefix = ""; // a possible prefix for attribute names
     protected HashMap<String, Boolean> projMap = new HashMap<String, Boolean>(); // projection map
-    
+    private int lineCount = 0;
     public String[] headers(){return headers;} 
     public String[] values(){return values;}
     public String[] types(){return types;}
@@ -82,8 +83,24 @@ public class EntityInstance {
     }
     
     public String toCSV(String separator, SchemaFilters filters){
+//        System.out.println(Arrays.toString(this.headers()));
     	HashMap<String, Boolean> filter = filters.getEntityFilter(relationName); 
-        String out = ""; int count =0;  
+        String out = ""; int count =0;
+//        if(this.lineCount == 0){
+//            for (int i=0; i<headers.length-1; i++){
+//                out += addQuotes(headers[i],"string");
+//                out += separator;
+//            }
+//            out+=addQuotes(headers[headers.length-1], "string");
+//            out+="\n";
+//            this.lineCount++;
+//        }
+//        for (int i=0; i<headers.length-1; i++){
+//                out += addQuotes(headers[i],"string");
+//                out += separator;
+//        }
+//        out+=addQuotes(headers[headers.length-1], "string");
+//        out += "***\n";
         for (int i=0; i<values.length; i++){
             if (projectAll || projMap.get(headers[i])!=null) {
                 out += (filter==null || filter.get(headers[i])!=null)  ? addQuotes(values[i],types[i]) : addQuotes("", types[i]);

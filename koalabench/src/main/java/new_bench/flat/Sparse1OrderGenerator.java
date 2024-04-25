@@ -56,8 +56,8 @@ public class Sparse1OrderGenerator implements Iterable<Entity> {
 		RegionGeneratorIterator c_regIt; 
 		CustomerGeneratorIterator custIt;
 		
-    	public Sparse1OrderGeneratorIterator(int scaleFactor, int part, int partCount){ 
-
+    	public Sparse1OrderGeneratorIterator(int scaleFactor, int part, int partCount){
+			System.out.println(scaleFactor);
     		LineItemGenerator liGen = new LineItemGenerator(scaleFactor, step, children);
     		OrderGenerator oGen = new OrderGenerator(scaleFactor, step, children);
     		CustomerGenerator cGen = new CustomerGenerator(scaleFactor, step, children);

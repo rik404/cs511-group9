@@ -25,13 +25,7 @@ ENV SPARK_HOME /usr/local/spark
 
 ENV PATH $PATH:$HADOOP_HOME/bin:$HADOOP_HOME/sbin:$SPARK_HOME/bin
 
-#REMOVE THEEEEEEEEEEEEEEEESEEEEEEEEEE
-#COPY hadoop-3.3.6.tar.gz /hadoop-3.3.6.tar.gz
 
-#COPY spark-3.4.1-bin-hadoop3.tgz /spark-3.4.1-bin-hadoop3.tgz
-
-# COPY data/snow_date.csv /snow_date.csv
-# COPY data/snow_line_item.csv /snow_line_item.csv
 COPY /data/flat_line_item.csv /flat_line_item.csv
  
 RUN --mount=target=/var/lib/apt/lists,type=cache,sharing=locked \
@@ -58,8 +52,6 @@ RUN --mount=target=/var/lib/apt/lists,type=cache,sharing=locked \
 COPY hadoop-resources $HADOOP_HOME/etc/hadoop/
 
 RUN mkdir -p /mongo-jars
-
-# COPY mongo-resources /mongo-jars/
 
 RUN hdfs namenode -format
 

@@ -1,3 +1,6 @@
+# Memory issues because of conversion to dataframe 
+# FIX: Using Scala program to load data
+
 import argparse
 import yaml
 from pyArango.connection import Connection
@@ -13,7 +16,6 @@ def read_config(config_file):
             print(exc)
 
 def process_csv_and_upload(config_file, parquet_file, collection_name, dataset):
-    # Read configuration from YAML file
     config = read_config(config_file)
     hdfs_host = config['hdfs']['host']
     hdfs_port = config['hdfs']['port']
@@ -75,17 +77,7 @@ def process_csv_and_upload(config_file, parquet_file, collection_name, dataset):
         .schema(schema)\
         .load(f"hdfs://{hdfs_host}:{hdfs_port}/user/spark/{dataset}")
 
-    # Perform processing (e.g., transformations, aggregations)
-    # For example, you can show the DataFrame
     df.show()
-
-    # Save the processed data to Parquet format in HDFS
-    # df.write.parquet(f"hdfs://{hdfs_host}:{hdfs_port}/user/spark/{parquet_file}")
-
-    # Stop SparkSession
-    # spark.stop()
-
-    # Connect to ArangoDB
 
     conn = Connection(username=arango_username, password=arango_password, arangoURL=f"http://{arango_host}:{arango_port}")
     db = conn[arango_db]
@@ -103,30 +95,22 @@ def process_csv_and_upload(config_file, parquet_file, collection_name, dataset):
 
     # df.write.jdbc(url=f"http://{arango_host}:{arango_port}", table=collection_name, mode="overwrite", properties=properties)
 
-    # Initialize SparkSession
     # spark = SparkSession.builder \
     #     .appName("ArangoDBUpload") \
     #     .getOrCreate()
 
-    # Read processed data from HDFS
     # processedData = spark.read.parquet(f"hdfs://{hdfs_host}:{hdfs_port}/user/spark/{parquet_file}")
 
-    # Convert Spark DataFrame to Pandas DataFrame
     # processed_df_pandas = processedData.toPandas()
     # processed_df_pandas = df.toPandas()
 
-    # Convert Pandas DataFrame to list of dictionaries
     # data = processed_df_pandas.to_dict(orient="records")
 
     data = df.collect()
-    # Insert data into ArangoDB collection
-    # for doc in data:
-    #     collection.createDocument(doc).save()
 
     for row in data:
         doc = {field.name: getattr(row, field.name) for field in df.schema.fields}
         collection.createDocument(doc).save()
-    # Stop SparkSession
     spark.stop()
 
 if __name__ == "__main__":

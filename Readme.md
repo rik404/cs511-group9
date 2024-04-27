@@ -1,17 +1,5 @@
-Group 9 project for CS511 - Spring 2024
+## Evaluating NoSQL Databases for OLAP Workloads: A Benchmarking Study of MongoDB, Redis, Kudu and ArangoDB
 
+#### Contributors : Rishi Kesav Mohan (rkmohan2@illinois.edu) | Krishna Anandan Ganesan (kag8@illinois.edu) | Risheek Rakshit Sukumar Kanmani (rrs7@illinois.edu) | Nisha Ramasubramanian (nr50@illinois.edu)
 
-## wsl cleanup
-sudo docker system prune
-fstrim -a --------in wsl
-
-
-
-wsl --shutdown
-diskpart
-# open window Diskpart
-select vdisk file="C:\Users\mohan\AppData\Local\packages\CanonicalGroupLimited.Ubuntu_79rhkp1fndgsc\LocalState\ext4.vhdx"
-attach vdisk readonly
-compact vdisk
-detach vdisk
-exit
+This repository contains the all the development we did as a part of evaluating NoSQL databases for executing OLAP workloads. Every section is equipped with its individual documentation to aid with executing the benchmarks for the respective NoSQL solution.

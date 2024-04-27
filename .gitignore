@@ -3,3 +3,5 @@
 **/**.tgz
 **/**.Identifier
 **/*.csv
+.vscode/
+.DS_Store

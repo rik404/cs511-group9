@@ -31,3 +31,7 @@ ENV PATH=$PATH:$HADOOP_HOME/bin:$HADOOP_HOME/sbin
 ENV SPARK_HOME=/opt/spark
 ENV PATH=$PATH:$SPARK_HOME/bin
 RUN mkdir sparklogs
+
+RUN apt-get update && \
+    apt-get install -y python3-pip
+RUN pip3 install redis

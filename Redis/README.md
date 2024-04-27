@@ -1,25 +1,29 @@
-# CS 511: Project 1 HDFS/Spark
+### Executing the Redis Data Pipeline
 
-Please refer to the instructions at [https://ddkang.github.io/teaching/2024-spring/p1](https://ddkang.github.io/teaching/2024-spring/p1).
+Generate the required dataset from koalabench using the following command:
 
-To get started, spin up the cluster.
-```bash
-bash start-all.sh
+```
+java DBGen json flat sf<scale-factor-number>
 ```
 
-Test HDFS deployment.
-```bash
-bash test_hdfs.sh
-```
+Once the dataset has been generated move it into the Redis root directory.
 
-Test Spark deployment.
-```bash
-bash test_spark.sh
-```
-#### TerraSort Sorting Implementation
+#### Starting Docker
 
-- To execute the sorting and checking the grading once, you can run `testsetup_docker.sh`.
-- To run the sorting funtion multiple times and try sorting different CSVs in every iteration and grade every iteration, you can run `test_bulk.sh`.
-- The script `terrasort-helper.py` generates the CSV in the required format and it is saved as `TerraSort_Cap.csv`.
-- The script also performs the required sorting operations on the generated CSV and saves it as `TerraSort_Cap_PreSorted.csv`.
-- The presorted CSV is considered as ground truth and used to verify the CSV after sorting by Spark.
+- Run `bash start-all.sh` as this will setup the docker cluster consisting of 1 master and 3 worker nodes. 
+- This script will also install Hadoop 3.3.6 and Spark 3.4.0 on all three systems.
+
+#### Setting up Redis Environment
+
+Run `bash redis_setup.sh`. This script aims to do the following operations on your docker cluster:
+- Spawn a redis container with the latest version.
+- Pre-processes the dataset and prepares it for data loading.
+- Moves the pre-processed dataset from local to HDFS.
+- Executes the PySpark script `spark_dataload.py` to load data from HDFS to Redis Container.
+- The time taken by the cluster to complete the loading of data is shown at the end of the script's execution.
+
+#### Running Benchmark Queries
+
+- Run `bash redis_queries.sh` to execute the selected benchmark queries from TPC-H collection. 
+- All queries are available under `/benchmark_queries`.
+- At the end of every query, the received output along with time taken is displayed on shell.

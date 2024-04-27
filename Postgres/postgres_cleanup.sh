@@ -1,0 +1,5 @@
+rm preprocessed_snow_customer.csv
+rm preprocessed_snow_line_item.csv
+rm preprocessed_snow_order.csv
+rm removed_custkeys.txt
+rm removed_orderkeys.txt

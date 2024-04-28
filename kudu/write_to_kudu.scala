@@ -47,28 +47,12 @@ val schema = StructType(
   )
 )
 val df = spark.read.option("headers",true).schema(schema).csv("hdfs://flat_line_item.csv").withColumn("id",monotonicallyIncreasingId)
-val schema4 = schema.add(StructField("id", LongType, nullable = false))
+val schema1 = schema.add(StructField("id", LongType, nullable = false))
 val kuduContext = new KuduContext("kudu-master-1:7051,kudu-master-2:7151,kudu-master-3:7251", spark.sparkContext)
 
-kuduContext.createTable("line_item", schema4, Seq("id"),new CreateTableOptions().setNumReplicas(1).addHashPartitions(List("id").asJava, 3))
+kuduContext.createTable("line_item", schema1, Seq("id"),new CreateTableOptions().setNumReplicas(1).addHashPartitions(List("id").asJava, 3))
 kuduContext.insertRows(df, "line_item")
-val newDf = df.withColumn("current_date",current_date()).withColumn("current_timestamp",current_timestamp())
-
 
 kuduContext.deleteTable("line_item")
-val df_r = spark.read.options(Map("kudu.master" -> "kudu-master-1:7051,kudu-master-2:7151,kudu-master-3:7251", "kudu.table" -> "line_item")).format("kudu").load()
-
-var numberOfNew = 4000
-var input = df
-var newFrames = 0 to numberOfNew map (_ => Seq.empty[Int].toDF) toArray
-var size = 105012007
-val limit = (size / numberOfNew).toInt
-
-while (size > 0) {
-    newFrames(numberOfNew) = input.limit(limit)
-    input = input.except(newFrames(numberOfNew))
-    size = size - limit
-    numberOfNew = numberOfNew - 1
-}
 
 df.write.options(Map("kudu.master" -> "kudu-master-1:7051,kudu-master-2:7151,kudu-master-3:7251", "kudu.table" -> "line_item")).format("kudu").mode("append").save()

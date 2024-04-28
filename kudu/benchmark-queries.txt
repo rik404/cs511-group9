@@ -1,6 +1,3 @@
-Write from spark to kudu 
-sf1 - Time taken: 41806 ms
-
 SQL1:
     select
         returnflag,
@@ -24,12 +21,6 @@ SQL1:
         returnflag,
         status;
 
-RESULT
--SF20-millis: ,
--SF10-millis:  
--SF1: Fetched 3 row(s) in 0.68s
-
-
 SQL3:
     select
         orderkey,
@@ -49,12 +40,6 @@ SQL3:
     order by
         revenue desc,
         orderDate
-
-
-RESULT SF20:
-SF20-millis: 
-SF10-millis: 
-SF1: Fetched 406707 row(s) in 32.11s
 
 SQL4:
     select
@@ -78,11 +63,6 @@ SQL4:
     order by
         orderPriority;
 
-RESULT
-SF20-millis: 129701
-SF10-millis: 57333
-SF1: Fetched 3 row(s) in 0.36s
-
 SQL5:
     select
         c_name,
@@ -99,11 +79,6 @@ SQL5:
         revenue desc;
 
 
-RESULT 
-SF20-millis: 
-SF10-millis: 
-SF1: Fetched 16559 row(s) in 1.48s
-
 SQL6:
     select
         sum(extendedPrice * discount) as revenue
@@ -114,90 +89,3 @@ SQL6:
         and shipDate < DATE_ADD(TO_DATE('1996-08-09'),365)
         and discount between 0.05 - 0.01 and 0.05 + 0.01
         and quantity < 40;
-
-
-RESULT
-SF20-millis: 
-SF10-millis: 
-SF1: Fetched 1 row(s) in 0.25s
-
-
-
-
-
-----Skip-----
-SQL2:
-    select FIRST 100
-        c_name,
-        customerKey,
-        o_orderkey,
-        orderDate,
-        o_totalprice,
-        sum(l_quantity)
-    from
-        customer,
-        orders,
-        lineitem
-    where
-        o_orderkey in (
-        select
-        orderkey
-        from
-        lineitem
-        group by
-        orderkey having
-            sum(l_quantity) > 30
-        )
-        and customerKey = o_custkey
-        and o_orderkey = orderkey
-    group by
-        c_name,
-        customerKey,
-        o_orderkey,
-        orderDate,
-        o_totalprice
-    order by
-        o_totalprice desc,
-        orderDate
-
-MONGOSH2:
-    db.flat.aggregate([
-    {
-        $group: {
-        _id: {
-            c_name: "$c_name",
-            customerKey: "$customerKey",
-            o_orderkey: "$orderkey",
-            orderDate: "$orderdate",
-            o_totalprice: "$extendedPrice"
-        },
-        sum_quantity: { $sum: "$quantity" }
-        }
-    },
-    {
-        $match: {
-        sum_quantity: { $gt: 30 }
-        }
-    },
-    {
-        $project: {
-        _id: 0,
-        c_name: "$_id.c_name",
-        customerKey: "$_id.customerKey",
-        o_orderkey: "$_id.o_orderkey",
-        orderDate: "$_id.orderDate",
-        o_totalprice: "$_id.o_totalprice",
-        sum_quantity: 1
-        }
-    },
-    {
-        $sort: {
-        extendedPrice: -1,
-        orderDate: 1
-        }
-    },
-    {
-        $limit: 100
-    }
-    ]);
--------------

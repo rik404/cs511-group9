@@ -1,0 +1,1 @@
+docker-compose -f cs511p1-compose.yaml exec mongodb mongosh

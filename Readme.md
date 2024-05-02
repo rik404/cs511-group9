@@ -2,4 +2,6 @@
 
 #### Contributors : Rishi Kesav Mohan (rkmohan2@illinois.edu) | Krishna Anandan Ganesan (kag8@illinois.edu) | Risheek Rakshit Sukumar Kanmani (rrs7@illinois.edu) | Nisha Ramasubramanian (nr50@illinois.edu)
 
-This repository contains the all the development we did as a part of evaluating NoSQL databases for executing OLAP workloads. Every section is equipped with its individual documentation to aid with executing the benchmarks for the respective NoSQL solution.
+This repository contains the all the development we did as a part of evaluating NoSQL databases for executing OLAP workloads. Every section is equipped with its individual documentation to aid with executing the benchmarks for the respective Data pipeline.
+
+For generating the dataset for the respective data pipeline please refer the readme inside the koalabench folder.
